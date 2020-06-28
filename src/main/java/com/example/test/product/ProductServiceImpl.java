@@ -1,5 +1,8 @@
 package com.example.test.product;
 
+import com.example.test.exception.RegisterNotFoundException;
+import com.example.test.exception.ResourceAlreadyExistsException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static java.util.Objects.isNull;
@@ -8,8 +11,9 @@ import static java.util.Objects.nonNull;
 @Service
 public class ProductServiceImpl implements ProductService {
 
-    private ProductRepository repo;
+    private final ProductRepository repo;
 
+    @Autowired
     public ProductServiceImpl(ProductRepository repo) {
         this.repo = repo;
     }
@@ -17,7 +21,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product create(Product product) {
         if (nonNull(product.getId()) && repo.existsById(product.getId())) {
-            throw new IllegalArgumentException("ID is already registered");
+            throw new ResourceAlreadyExistsException("ID is already registered");
         }
         return repo.save(product);
     }
@@ -29,7 +33,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         if (!repo.existsById(product.getId())) {
-            throw new IllegalArgumentException("Register with this ID not found");
+            throw new RegisterNotFoundException("Register with this ID not found");
         }
 
         return repo.save(product);
@@ -42,7 +46,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         if (!repo.existsById(id)) {
-            throw new IllegalArgumentException("Register with this ID not found");
+            throw new RegisterNotFoundException("Register with this ID not found");
         }
 
         repo.deleteById(id);

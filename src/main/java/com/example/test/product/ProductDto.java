@@ -2,34 +2,31 @@ package com.example.test.product;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
-@Entity
 @Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"id"})
-public class Product {
+public class ProductDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotNull
+    @NotNull(message = "name must not be null")
+    @Size(min = 5, max = 100, message = "name must be between 5 and 10 characteres")
     private String name;
 
-    @NotNull
+    @NotNull(message = "price must not be null")
+    @Min(value = 0, message = "price must not be less than 0")
     private BigDecimal price;
 
-    public ProductDto toDto() {
-        return ProductDto.builder()
+    public Product toEntity() {
+        return Product.builder()
                 .id(id)
                 .name(name)
                 .price(price)
